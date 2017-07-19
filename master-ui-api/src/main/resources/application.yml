@@ -1,0 +1,20 @@
+server:
+  port: 8468
+logging:
+  file: /java/C2S_LOGS/master-ui-api/masterUiApi.log
+info:
+  component: MASTER UI API
+ribbon:
+  ReadTimeout: 50000
+hystrix.command.default.execution.timeout.enabled: false
+security:
+  oauth2:
+    client:
+      client-id:  master-ui-api
+---
+spring.profiles: standalone-ssl
+spring:
+  profiles:
+    include: ssl-default
+server:
+  context-path: /master-ui-api
