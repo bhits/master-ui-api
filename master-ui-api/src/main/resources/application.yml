@@ -11,6 +11,24 @@ security:
   oauth2:
     client:
       client-id:  master-ui-api
+c2s:
+  oauth2:
+    client:
+      c2s-ui:
+        client-id: c2s-ui
+        secret: changeit
+        client-secret: changeit
+        access-token-url: http://localhost/uaa/oauth/token
+      provider-ui:
+        client-id: provider-ui
+        secret: changeit
+        client-secret: changeit
+        access-token-url: http://localhost/uaa/oauth/token
+      staff-ui:
+        client-id: staff-ui
+        secret: changeit
+        client-secret: changeit
+        access-token-url: http://localhost/uaa/oauth/token
 ---
 spring.profiles: standalone-ssl
 spring:
