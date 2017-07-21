@@ -17,7 +17,6 @@ public class UmsLookupRestController {
     @Autowired
     private UmsLookupService umsLookupService;
 
-
     @GetMapping("/roles")
     public List<RoleDto> getRoles() {
         return umsLookupService.getRoles();

@@ -1,6 +1,5 @@
 package gov.samhsa.c2s.masteruiapi.service.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CredentialDto {
-    private String username;
-    private String password;
-    private String role;
-
+public class LoginResponseDto {
+    private UaaTokenDto accessToken;
+    private  UaaUserInfoDto userInfo;
+    private  FullProfileResponse profile;
 }

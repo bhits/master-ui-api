@@ -3,8 +3,7 @@ package gov.samhsa.c2s.masteruiapi.service;
 import gov.samhsa.c2s.masteruiapi.config.C2sOauth2ClientProperties;
 import gov.samhsa.c2s.masteruiapi.infrastructure.SupportedRoles;
 import gov.samhsa.c2s.masteruiapi.infrastructure.UaaClient;
-import gov.samhsa.c2s.masteruiapi.service.dto.CredentialDto;
-import gov.samhsa.c2s.masteruiapi.service.dto.UaaLoginResponseDto;
+import gov.samhsa.c2s.masteruiapi.service.dto.CredentialsDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaTokenDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaUserInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +26,11 @@ public class UaaServiceImpl implements UaaService {
     private UaaClient uaaClient;
 
     @Override
-    public UaaTokenDto getTokenUsingPasswordGrant(String role, String username, String password) {
+    public Optional<UaaTokenDto> getAccessTokenUsingPasswordGrant(CredentialsDto credentialsDto) {
         C2sOauth2ClientProperties.Client client = c2sOauth2ClientProperties.getClient();
         String clientId = null;
         String clientSecret = null;
+        String role = credentialsDto.getRole();
 
         if(role.equals( SupportedRoles.PATIENT.getName())){
             C2sOauth2ClientProperties.Client.C2sUi c2sUi = client.getC2sUi();
@@ -50,7 +50,8 @@ public class UaaServiceImpl implements UaaService {
             // Throw error
         }
 
-        return uaaClient.getTokenUsingPasswordGrant(createPasswordGrantFormParams(clientId,clientSecret, username, password));
+        Map<String,String> formParams = createPasswordGrantFormParams(clientId,clientSecret, credentialsDto.getUsername(), credentialsDto.getPassword());
+        return Optional.of(uaaClient.getTokenUsingPasswordGrant(formParams));
     }
 
     private Map<String,String> createPasswordGrantFormParams(String clientId, String clientSecret, String username, String password){
@@ -61,35 +62,13 @@ public class UaaServiceImpl implements UaaService {
         formParams.put("response_type", OAUTH2_RESPONSE_TYPE);
         formParams.put("username", username);
         formParams.put("password", password);
-
         return formParams;
     }
-    @Override
-    public UaaUserInfoDto getUserInfo(String token) {
-        return uaaClient.getUserInfo(token);
-    }
 
     @Override
-    public UaaLoginResponseDto loginAndGetUserInfo(CredentialDto credentialDto) {
-
-        Optional<UaaTokenDto> token = Optional.of(getTokenUsingPasswordGrant(credentialDto.getRole(), credentialDto.getUsername(), credentialDto.getPassword()));
-
-        if(token.isPresent()){
-            UaaTokenDto uaaTokenDto = token.get();
-            String bearerToken = uaaTokenDto.getToken_type().concat(" ").concat(uaaTokenDto.getAccess_token());
-            Optional<UaaUserInfoDto> userInfo = Optional.of(getUserInfo(bearerToken));
-            if(userInfo.isPresent()){
-                // Return token to user
-                return UaaLoginResponseDto.builder()
-                        .uaaTokenDto(uaaTokenDto)
-                        .userInfoDto(userInfo.get())
-                        .build();
-            }else{
-                // Throw exception and log cannot get userinfo
-            }
-        }else{
-            // Throw exception and  log cannot get access token error
-        }
-        return null;
+    public Optional<UaaUserInfoDto> getUserInfo(Optional<UaaTokenDto> token) {
+        UaaTokenDto uaaTokenDto = token.get();
+        String bearerToken = uaaTokenDto.getToken_type().concat(" ").concat(uaaTokenDto.getAccess_token());
+        return Optional.of(uaaClient.getUserInfo(bearerToken));
     }
 }
