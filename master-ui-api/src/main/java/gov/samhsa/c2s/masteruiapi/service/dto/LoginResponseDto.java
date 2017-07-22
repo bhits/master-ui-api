@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoginResponseDto {
     private UaaTokenDto accessToken;
-    private  UaaUserInfoDto userInfo;
-    private  FullProfileResponse profile;
+    private  LimitedProfileResponse profile;
 }
