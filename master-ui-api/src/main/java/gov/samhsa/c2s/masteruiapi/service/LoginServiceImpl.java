@@ -1,5 +1,7 @@
 package gov.samhsa.c2s.masteruiapi.service;
 
+import gov.samhsa.c2s.masteruiapi.config.C2sClientProperties;
+import gov.samhsa.c2s.masteruiapi.infrastructure.SupportedRoles;
 import gov.samhsa.c2s.masteruiapi.service.dto.LoginResponseDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.CredentialsDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaTokenDto;
@@ -19,6 +21,9 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private UmsService umsService;
 
+    @Autowired
+    private C2sClientProperties c2sClientProperties;
+
     @Override
     public LoginResponseDto login(CredentialsDto credentialsDto) {
         Optional<UaaTokenDto>  accessToken =  uaaService.getAccessTokenUsingPasswordGrant(credentialsDto);
@@ -30,6 +35,7 @@ public class LoginServiceImpl implements LoginService {
                 return LoginResponseDto.builder()
                         .accessToken(accessToken.get())
                         .profile(limitedProfileResponse)
+                        .homeUrl(getHomeUrl(credentialsDto.getRole()))
                         .build();
             }else{
                 // TODO Throw exception: cannot get user info from UAA
@@ -39,5 +45,17 @@ public class LoginServiceImpl implements LoginService {
             // TODO Throw exception : cannot get token from UAA
             return  null;
         }
+    }
+
+    private String getHomeUrl(String role){
+        String homeUrl = null;
+        if(role.equals(SupportedRoles.PATIENT.getName())){
+            homeUrl =  c2sClientProperties.getC2sUi().getHomeUrl();
+        }else  if(role.equals(SupportedRoles.PROVIDER.getName())){
+            homeUrl =  c2sClientProperties.getProviderUi().getHomeUrl();
+        }else  if(role.equals(SupportedRoles.STAFF_USER.getName())){
+            homeUrl =  c2sClientProperties.getStaffUi().getHomeUrl();
+        }
+        return homeUrl;
     }
 }

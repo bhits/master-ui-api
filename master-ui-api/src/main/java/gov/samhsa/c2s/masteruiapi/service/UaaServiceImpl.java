@@ -1,6 +1,6 @@
 package gov.samhsa.c2s.masteruiapi.service;
 
-import gov.samhsa.c2s.masteruiapi.config.C2sOauth2ClientProperties;
+import gov.samhsa.c2s.masteruiapi.config.C2sClientProperties;
 import gov.samhsa.c2s.masteruiapi.infrastructure.SupportedRoles;
 import gov.samhsa.c2s.masteruiapi.infrastructure.UaaClient;
 import gov.samhsa.c2s.masteruiapi.service.dto.CredentialsDto;
@@ -17,7 +17,7 @@ import java.util.Optional;
 public class UaaServiceImpl implements UaaService {
 
     @Autowired
-    private C2sOauth2ClientProperties c2sOauth2ClientProperties;
+    private C2sClientProperties c2sClientProperties;
     private final String OAUTH2_GRAND_TYPE = "password";
     private final String OAUTH2_RESPONSE_TYPE = "token";
 
@@ -27,21 +27,20 @@ public class UaaServiceImpl implements UaaService {
 
     @Override
     public Optional<UaaTokenDto> getAccessTokenUsingPasswordGrant(CredentialsDto credentialsDto) {
-        C2sOauth2ClientProperties.Client client = c2sOauth2ClientProperties.getClient();
         String clientId = null;
         String clientSecret = null;
         String role = credentialsDto.getRole();
 
         if(role.equals( SupportedRoles.PATIENT.getName())){
-            C2sOauth2ClientProperties.Client.C2sUi c2sUi = client.getC2sUi();
+            C2sClientProperties.C2sUi c2sUi = c2sClientProperties.getC2sUi();
             clientId = c2sUi.getClientId();
             clientSecret = c2sUi.getClientSecret();
         }else if(role.equals( SupportedRoles.PROVIDER.getName())){
-            C2sOauth2ClientProperties.Client.ProviderUi providerUi = client.getProviderUi();
+            C2sClientProperties.ProviderUi providerUi = c2sClientProperties.getProviderUi();
             clientId = providerUi.getClientId();
             clientSecret = providerUi.getClientSecret();
         }else if(role.equals( SupportedRoles.STAFF_USER.getName())){
-            C2sOauth2ClientProperties.Client.StaffUi staffUi = client.getStaffUi();
+            C2sClientProperties.StaffUi staffUi = c2sClientProperties.getStaffUi();
             clientId = staffUi.getClientId();
             clientSecret = staffUi.getClientSecret();
         }

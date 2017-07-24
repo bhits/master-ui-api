@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class LoginResponseDto {
     private UaaTokenDto accessToken;
     private  LimitedProfileResponse profile;
+    private String homeUrl;
 }
