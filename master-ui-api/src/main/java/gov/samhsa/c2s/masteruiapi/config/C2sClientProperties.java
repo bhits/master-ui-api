@@ -26,6 +26,10 @@ public class C2sClientProperties {
     @Valid
     private StaffUi staffUi;
 
+    @NotNull
+    @Valid
+    private MasterUi masterUi;
+
     @Data
     public static class C2sUi{
 
@@ -81,5 +85,14 @@ public class C2sClientProperties {
         public byte[] getBasicAuthorizationHeader() {
             return (clientId.concat(":") + clientSecret).getBytes(StandardCharsets.UTF_8);
         }
+    }
+
+    @Data
+    public static class MasterUi{
+
+        @JsonIgnore
+        @NotEmpty
+        private String loginUrl;
+
     }
 }

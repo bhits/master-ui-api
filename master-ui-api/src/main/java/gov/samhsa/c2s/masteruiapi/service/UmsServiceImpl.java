@@ -41,4 +41,18 @@ public class UmsServiceImpl implements UmsService {
                 .mrn(currentUser.getMrn())
                 .build();
     }
+
+    @Override
+    public LimitedProfileResponse getStaffProfile() {
+        //Get system supported Locales
+        List<BaseUmsLookupDto> supportedLocales = umsClient.getLocales();
+        // TODO Implement get staff profile from DB
+        return LimitedProfileResponse.builder()
+                .userLocale("en")
+                .supportedLocales(supportedLocales)
+                .username("")
+                .firstName("Admin")
+                .lastName("Staff")
+                .build();
+    }
 }
