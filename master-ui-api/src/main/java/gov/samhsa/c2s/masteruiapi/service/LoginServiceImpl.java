@@ -29,15 +29,31 @@ public class LoginServiceImpl implements LoginService {
         Optional<UaaTokenDto>  accessToken =  uaaService.getAccessTokenUsingPasswordGrant(credentialsDto);
         if(accessToken.isPresent()){
             Optional<UaaUserInfoDto> userInfo = uaaService.getUserInfo(accessToken);
-            if(userInfo.isPresent()){
+            if(userInfo.isPresent() && (credentialsDto.getRole().equals(SupportedRoles.PATIENT.getName())
+                    ||credentialsDto.getRole().equals(SupportedRoles.PROVIDER.getName()) )){
+
+                System.out.println("I am in.");
+
                 LimitedProfileResponse limitedProfileResponse = umsService.getProfile(userInfo.get().getUser_id(), userInfo.get().getUser_name());
                 // Return token to user
                 return LoginResponseDto.builder()
                         .accessToken(accessToken.get())
-                        .profile(limitedProfileResponse)
-                        .homeUrl(getHomeUrl(credentialsDto.getRole()))
+                        .profileToken(userInfo.get())
+                        .limitedProfileResponse(limitedProfileResponse)
+                        .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
+                        .masterUiLoginUrl(c2sClientProperties.getMasterUi().getLoginUrl())
                         .build();
-            }else{
+            }else if(userInfo.isPresent() && credentialsDto.getRole().equals(SupportedRoles.STAFF_USER.getName())){
+                LimitedProfileResponse limitedProfileResponse = umsService.getStaffProfile();
+
+                return LoginResponseDto.builder()
+                        .accessToken(accessToken.get())
+                        .profileToken(userInfo.get())
+                        .limitedProfileResponse(limitedProfileResponse)
+                        .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
+                        .masterUiLoginUrl(c2sClientProperties.getMasterUi().getLoginUrl())
+                        .build();
+            }else {
                 // TODO Throw exception: cannot get user info from UAA
                 return null;
             }
@@ -47,7 +63,7 @@ public class LoginServiceImpl implements LoginService {
         }
     }
 
-    private String getHomeUrl(String role){
+    private String getUiHomeUrlByRole(String role){
         String homeUrl = null;
         if(role.equals(SupportedRoles.PATIENT.getName())){
             homeUrl =  c2sClientProperties.getC2sUi().getHomeUrl();
