@@ -28,6 +28,8 @@ c2s:
         secret: changeit
         client-secret: changeit
         home-url: http://localhost/staff-ui/home
+      master-ui:
+        login-url: http://localhost/master-ui/login
 ---
 spring.profiles: standalone-ssl
 spring:
