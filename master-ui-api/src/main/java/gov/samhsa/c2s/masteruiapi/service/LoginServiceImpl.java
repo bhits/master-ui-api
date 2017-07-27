@@ -7,6 +7,8 @@ import gov.samhsa.c2s.masteruiapi.service.dto.CredentialsDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaTokenDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaUserInfoDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.LimitedProfileResponse;
+import gov.samhsa.c2s.masteruiapi.service.exception.UserInforNotPresentException;
+import gov.samhsa.c2s.masteruiapi.service.exception.AccessTokenNotPresentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,12 +54,10 @@ public class LoginServiceImpl implements LoginService {
                         .masterUiLoginUrl( c2sMasterUiProperties.getLoginUrl())
                         .build();
             }else {
-                // TODO Throw exception: cannot get user info from UAA
-                return null;
+                throw new UserInforNotPresentException("");
             }
         }else {
-            // TODO Throw exception : cannot get token from UAA
-            return  null;
+            throw new AccessTokenNotPresentException();
         }
     }
 
