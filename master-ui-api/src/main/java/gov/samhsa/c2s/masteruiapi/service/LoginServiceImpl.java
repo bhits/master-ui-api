@@ -1,6 +1,6 @@
 package gov.samhsa.c2s.masteruiapi.service;
 
-import gov.samhsa.c2s.masteruiapi.config.C2sClientProperties;
+import gov.samhsa.c2s.masteruiapi.config.C2sMasterUiProperties;
 import gov.samhsa.c2s.masteruiapi.infrastructure.SupportedRoles;
 import gov.samhsa.c2s.masteruiapi.service.dto.LoginResponseDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.CredentialsDto;
@@ -22,7 +22,7 @@ public class LoginServiceImpl implements LoginService {
     private UmsService umsService;
 
     @Autowired
-    private C2sClientProperties c2sClientProperties;
+    private C2sMasterUiProperties c2sMasterUiProperties;
 
     @Override
     public LoginResponseDto login(CredentialsDto credentialsDto) {
@@ -39,7 +39,7 @@ public class LoginServiceImpl implements LoginService {
                         .profileToken(userInfo.get())
                         .limitedProfileResponse(limitedProfileResponse)
                         .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
-                        .masterUiLoginUrl(c2sClientProperties.getMasterUi().getLoginUrl())
+                        .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
                         .build();
             }else if(userInfo.isPresent() && credentialsDto.getRole().equals(SupportedRoles.STAFF_USER.getName())){
                 LimitedProfileResponse limitedProfileResponse = umsService.getStaffProfile();
@@ -49,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
                         .profileToken(userInfo.get())
                         .limitedProfileResponse(limitedProfileResponse)
                         .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
-                        .masterUiLoginUrl(c2sClientProperties.getMasterUi().getLoginUrl())
+                        .masterUiLoginUrl( c2sMasterUiProperties.getLoginUrl())
                         .build();
             }else {
                 // TODO Throw exception: cannot get user info from UAA
@@ -62,30 +62,11 @@ public class LoginServiceImpl implements LoginService {
     }
 
     private String getUiHomeUrlByRole(String role){
-        String homeUrl = null;
-        if(role.equals(SupportedRoles.PATIENT.getName())){
-            homeUrl =  c2sClientProperties.getC2sUi().getHomeUrl();
-        }else  if(role.equals(SupportedRoles.PROVIDER.getName())){
-            homeUrl =  c2sClientProperties.getProviderUi().getHomeUrl();
-        }else  if(role.equals(SupportedRoles.STAFF_USER.getName())){
-            homeUrl =  c2sClientProperties.getStaffUi().getHomeUrl();
-        }
-        return homeUrl;
+        return c2sMasterUiProperties.getMapping().get(role).getHomeUrl();
     }
 
     private boolean hasAccessScope(String scopes, String selectedRole){
-        String C2S_UI_ACCESS_SCOPE = "c2sUi.access";
-        String PROVIDER_UI_ACCESS_SCOPE = "providerUi.access";
-        String STAFF_UI_ACCESS_SCOPE = "staffUi.access";
-
-        if(selectedRole.equals(SupportedRoles.PATIENT.getName())){
-            return scopes.contains(C2S_UI_ACCESS_SCOPE);
-        }else if(selectedRole.equals(SupportedRoles.PROVIDER.getName())){
-            return scopes.contains(PROVIDER_UI_ACCESS_SCOPE);
-        }else if(selectedRole.equals(SupportedRoles.STAFF_USER.getName())){
-            return scopes.contains(STAFF_UI_ACCESS_SCOPE);
-        }
-        return false;
+        return scopes.contains(c2sMasterUiProperties.getMapping().get(selectedRole).getAccessScope());
     }
 
 }
