@@ -27,12 +27,10 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public LoginResponseDto login(CredentialsDto credentialsDto) {
         Optional<UaaTokenDto>  accessToken =  uaaService.getAccessTokenUsingPasswordGrant(credentialsDto);
-        if(accessToken.isPresent()){
+        if(accessToken.isPresent() && hasAccessScope(accessToken.get().getScope(), credentialsDto.getRole())){
             Optional<UaaUserInfoDto> userInfo = uaaService.getUserInfo(accessToken);
             if(userInfo.isPresent() && (credentialsDto.getRole().equals(SupportedRoles.PATIENT.getName())
                     ||credentialsDto.getRole().equals(SupportedRoles.PROVIDER.getName()) )){
-
-                System.out.println("I am in.");
 
                 LimitedProfileResponse limitedProfileResponse = umsService.getProfile(userInfo.get().getUser_id(), userInfo.get().getUser_name());
                 // Return token to user
@@ -74,4 +72,20 @@ public class LoginServiceImpl implements LoginService {
         }
         return homeUrl;
     }
+
+    private boolean hasAccessScope(String scopes, String selectedRole){
+        String C2S_UI_ACCESS_SCOPE = "c2sUi.access";
+        String PROVIDER_UI_ACCESS_SCOPE = "providerUi.access";
+        String STAFF_UI_ACCESS_SCOPE = "staffUi.access";
+
+        if(selectedRole.equals(SupportedRoles.PATIENT.getName())){
+            return scopes.contains(C2S_UI_ACCESS_SCOPE);
+        }else if(selectedRole.equals(SupportedRoles.PROVIDER.getName())){
+            return scopes.contains(PROVIDER_UI_ACCESS_SCOPE);
+        }else if(selectedRole.equals(SupportedRoles.STAFF_USER.getName())){
+            return scopes.contains(STAFF_UI_ACCESS_SCOPE);
+        }
+        return false;
+    }
+
 }
