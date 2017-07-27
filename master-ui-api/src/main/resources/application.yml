@@ -12,24 +12,26 @@ security:
     client:
       client-id:  master-ui-api
 c2s:
-    client:
-      c2s-ui:
-        client-id: c2s-ui
-        secret: changeit
-        client-secret: changeit
-        home-url: http://localhost/c2s-ui/home
-      provider-ui:
-        client-id: provider-ui
-        secret: changeit
-        client-secret: changeit
-        home-url: http://localhost/provider-ui/home
-      staff-ui:
-        client-id: staff-ui
-        secret: changeit
-        client-secret: changeit
-        home-url: http://localhost/staff-ui/home
-      master-ui:
-        login-url: http://localhost/master-ui/login
+  client:
+    c2s-ui:
+      client-id: c2s-ui
+      secret: changeit
+      client-secret: changeit
+      home-url: c2s-ui/home
+    provider-ui:
+      client-id: provider-ui
+      secret: changeit
+      client-secret: changeit
+      home-url: provider-ui/home
+    staff-ui:
+      client-id: staff-ui
+      secret: changeit
+      client-secret: changeit
+      home-url: staff-ui/home
+    master-ui:
+      login-url: master-ui/login
+  authorization-server:
+    host: http://localhost
 ---
 spring.profiles: standalone-ssl
 spring:
