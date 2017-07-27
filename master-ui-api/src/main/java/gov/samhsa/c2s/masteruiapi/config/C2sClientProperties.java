@@ -13,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 @ConfigurationProperties(prefix = "c2s.client")
 @Data
 public class C2sClientProperties {
-
     @NotNull
     @Valid
     private C2sUi c2sUi;
@@ -44,9 +43,6 @@ public class C2sClientProperties {
         @NotEmpty
         private String homeUrl;
 
-        public byte[] getBasicAuthorizationHeader() {
-            return (clientId.concat(":") + clientSecret).getBytes(StandardCharsets.UTF_8);
-        }
     }
 
     @Data
