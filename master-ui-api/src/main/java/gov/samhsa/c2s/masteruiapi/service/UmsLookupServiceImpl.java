@@ -19,11 +19,17 @@ public class UmsLookupServiceImpl implements UmsLookupService {
     @Override
     public List<RoleDto> getRoles() {
         // Filter return roles by currently supported user in the UI
-        return umsLookupClient.getRoles().stream()
+        List<RoleDto> roles =  umsLookupClient.getRoles().stream()
                 .filter(roleDto -> roleDto.getCode().equals(SupportedRoles.PROVIDER.getName()) ||
                                    roleDto.getCode().equals(SupportedRoles.PATIENT.getName()) ||
                                    roleDto.getCode().equals(SupportedRoles.STAFF_USER.getName()) )
                 .collect(Collectors.toList());
 
+        roles.stream().forEach( role -> {
+            if(role.getCode().equals(SupportedRoles.STAFF_USER.getName())){
+                role.setName("Staff");
+            }
+        } );
+        return roles;
     }
 }
