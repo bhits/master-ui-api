@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Map;
 
-@FeignClient(name = "uaa", url = "http://localhost", path = "/uaa", configuration = CoreFeignConfiguration.class)
+@FeignClient(name = "uaa", url = "${c2s.authorization-server.host}", path = "/uaa", configuration = CoreFeignConfiguration.class)
 public interface UaaClient {
 
     @RequestMapping(value = "/oauth/token", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    @Headers("Content-Type: application/x-www-form-urlencoded")
     UaaTokenDto getTokenUsingPasswordGrant(Map<String, ?> formParams);
-
 
     @RequestMapping(value = "/userinfo", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     UaaUserInfoDto getUserInfo(@RequestHeader("Authorization") String authorizationHeader);
