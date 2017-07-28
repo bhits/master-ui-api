@@ -15,10 +15,8 @@ import java.util.Map;
 public class C2sMasterUiProperties {
 
     @NotNull
-    @Valid
     private Map<String, C2sRoleProperties > mapping;
 
     @NotNull
-    @Valid
     private String loginUrl;
 }

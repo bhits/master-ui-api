@@ -31,7 +31,7 @@ c2s:
           home-url: staff-ui/home
       login-url: master-ui/login
   authorization-server:
-      host: http://localhost
+      url: http://localhost/uaa
 ---
 spring.profiles: standalone-ssl
 spring:

@@ -2,6 +2,7 @@ package gov.samhsa.c2s.masteruiapi.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -15,16 +16,16 @@ import java.nio.charset.StandardCharsets;
 public class C2sRoleProperties {
 
     @JsonIgnore
-    @NotEmpty
+    @NotBlank
     private String clientId;
 
     @JsonIgnore
-    @NotEmpty
+    @NotBlank
     private String clientSecret;
 
-    @NotEmpty
+    @NotBlank
     private String accessScope;
 
-    @NotEmpty
+    @NotBlank
     private String homeUrl;
 }
