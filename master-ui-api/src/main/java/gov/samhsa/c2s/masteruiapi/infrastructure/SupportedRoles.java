@@ -3,7 +3,7 @@ package gov.samhsa.c2s.masteruiapi.infrastructure;
 public enum SupportedRoles {
     PATIENT("patient"),
     PROVIDER("provider"),
-    STAFF_USER("staffUser");
+    STAFF("staff");
 
     private String name;
 

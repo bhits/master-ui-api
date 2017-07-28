@@ -31,6 +31,7 @@ public class LoginServiceImpl implements LoginService {
         Optional<UaaTokenDto>  accessToken =  uaaService.getAccessTokenUsingPasswordGrant(credentialsDto);
         if(accessToken.isPresent() && hasAccessScope(accessToken.get().getScope(), credentialsDto.getRole())){
             Optional<UaaUserInfoDto> userInfo = uaaService.getUserInfo(accessToken);
+            // TODO remove this check when staff profile is from UMS
             if(userInfo.isPresent() && (credentialsDto.getRole().equals(SupportedRoles.PATIENT.getName())
                     ||credentialsDto.getRole().equals(SupportedRoles.PROVIDER.getName()) )){
 
@@ -43,7 +44,7 @@ public class LoginServiceImpl implements LoginService {
                         .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
                         .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
                         .build();
-            }else if(userInfo.isPresent() && credentialsDto.getRole().equals(SupportedRoles.STAFF_USER.getName())){
+            }else if(userInfo.isPresent() && credentialsDto.getRole().equals(SupportedRoles.STAFF.getName())){
                 LimitedProfileResponse limitedProfileResponse = umsService.getStaffProfile();
 
                 return LoginResponseDto.builder()

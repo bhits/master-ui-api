@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 @Configuration
 public class SecurityConfig {
 
-    private static final String RESOURCE_ID = "c2sUiApi";
+    private static final String RESOURCE_ID = "masterUiApi";
 
     @Bean
     public ResourceServerConfigurer resourceServer(SecurityProperties securityProperties) {
@@ -28,12 +28,11 @@ public class SecurityConfig {
                 if (securityProperties.isRequireSsl()) {
                     http.requiresChannel().anyRequest().requiresSecure();
                 }
+                // Security scope for accessing management endpoint
                 http.authorizeRequests()
-                        // Security scope for accessing management endpoint
-                        .antMatchers(HttpMethod.GET, "/management/**").access("#oauth2.hasScope('staffUi.management')")
-                        .antMatchers(HttpMethod.GET, "/management/**").access("#oauth2.hasScope('providerUi.management')")
-                        .antMatchers(HttpMethod.POST, "/management/**").access("#oauth2.hasScope('providerUi.management')")
-                        .antMatchers(HttpMethod.POST, "/management/**").access("#oauth2.hasScope('staffUi.management')");
+                        .antMatchers(HttpMethod.POST, "/c2s/login").permitAll()
+                        .antMatchers(HttpMethod.GET, "/ums/users/roles").permitAll()
+                        .anyRequest().denyAll();
             }
         };
     }
