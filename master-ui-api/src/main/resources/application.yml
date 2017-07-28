@@ -11,6 +11,27 @@ security:
   oauth2:
     client:
       client-id:  master-ui-api
+c2s:
+  master-ui:
+      mapping:
+        patient:
+          client-id: c2s-ui
+          client-secret: changeit
+          access-scope: c2sUi.access
+          home-url: c2s-ui/home
+        provider:
+          client-id: provider-ui
+          client-secret: changeit
+          access-scope: providerUi.access
+          home-url: provider-ui/home
+        staffUser:
+          client-id: staff-ui
+          client-secret: changeit
+          access-scope: staffUi.access
+          home-url: staff-ui/home
+      login-url: master-ui/login
+  authorization-server:
+      url: http://localhost/uaa
 ---
 spring.profiles: standalone-ssl
 spring:

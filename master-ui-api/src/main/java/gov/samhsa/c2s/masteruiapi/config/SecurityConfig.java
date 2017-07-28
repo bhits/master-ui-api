@@ -9,12 +9,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 
-import static gov.samhsa.c2s.common.oauth2.OAuth2ScopeUtils.hasScopes;
 
 @Configuration
 public class SecurityConfig {
 
-    private static final String RESOURCE_ID = "c2sUiApi";
+    private static final String RESOURCE_ID = "masterUiApi";
 
     @Bean
     public ResourceServerConfigurer resourceServer(SecurityProperties securityProperties) {
@@ -29,29 +28,11 @@ public class SecurityConfig {
                 if (securityProperties.isRequireSsl()) {
                     http.requiresChannel().anyRequest().requiresSecure();
                 }
-//                http.authorizeRequests()
-//                        .antMatchers(HttpMethod.GET, "/pcm/**").access(hasScopes("c2sUiApi.read"))
-//                        .antMatchers(HttpMethod.POST, "/pcm/**").access(hasScopes("c2sUiApi.write"))
-//                        .antMatchers(HttpMethod.DELETE, "/pcm/**").access(hasScopes("c2sUiApi.write"))
-//                        .antMatchers(HttpMethod.PUT, "/pcm/**").access(hasScopes("c2sUiApi.write"))
-//
-//                        .antMatchers(HttpMethod.GET, "/ums/users/profile/**").access(hasScopes("c2sUiApi.read"))
-//                        .antMatchers(HttpMethod.PUT, "/ums/users/locale/**").access(hasScopes("c2sUiApi.write"))
-//                        .antMatchers(HttpMethod.POST, "/ums/users/verification/**").permitAll()
-//                        .antMatchers(HttpMethod.GET, "/ums/users/activation/**").permitAll()
-//                        .antMatchers(HttpMethod.POST, "/ums/users/activation/**").permitAll()
-//
-//                        .antMatchers(HttpMethod.GET, "/vss/**").access(hasScopes("c2sUiApi.read"))
-//                        .antMatchers(HttpMethod.GET, "/pls/**").access(hasScopes("c2sUiApi.read"))
-//                        .antMatchers(HttpMethod.GET, "/try-policy/**").access(hasScopes("c2sUiApi.read"))
-//
-//                        .antMatchers(HttpMethod.GET, "/phr/uploadedDocuments/**").access(hasScopes("c2sUiApi.read"))
-//                        .antMatchers(HttpMethod.POST, "/phr/uploadedDocuments/**").access(hasScopes("c2sUiApi.write"))
-//                        .antMatchers(HttpMethod.DELETE, "/phr/uploadedDocuments/**").access(hasScopes("c2sUiApi.write"))
-//                        .antMatchers(HttpMethod.PUT, "/phr/uploadedDocuments/**").access(hasScopes("c2sUiApi.write"))
-//
-//                        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//                        .anyRequest().denyAll();
+                // Security scope for accessing management endpoint
+                http.authorizeRequests()
+                        .antMatchers(HttpMethod.POST, "/c2s/login").permitAll()
+                        .antMatchers(HttpMethod.GET, "/ums/users/roles").permitAll()
+                        .anyRequest().denyAll();
             }
         };
     }
