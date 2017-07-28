@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LoginResponseDto {
-    private UaaTokenDto accessToken;
-    private UaaUserInfoDto profileToken;
+    private Object accessToken;
+    private Object profileToken;
     private LimitedProfileResponse limitedProfileResponse;
     private String c2sClientHomeUrl;
     private String masterUiLoginUrl;
