@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LimitedProfileResponse {
+    private Long userId;
     private String userLocale;
     private List<BaseUmsLookupDto> supportedLocales;
     private String username;
