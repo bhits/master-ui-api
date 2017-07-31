@@ -24,7 +24,7 @@ c2s:
           client-secret: changeit
           access-scope: providerUi.access
           home-url: provider-ui/home
-        staffUser:
+        staff:
           client-id: staff-ui
           client-secret: changeit
           access-scope: staffUi.access
