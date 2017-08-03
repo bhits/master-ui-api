@@ -14,7 +14,7 @@ For more information about this image, the source code, and its history, please 
 
 # What is C2S-UI-API?
 
-The Consent2Share User Interface API (master-ui-api) is a Backend For Frontends(BFF) component of Consent2Share (C2S)
+The Master User Interface API (master-ui-api) is a Backend For Frontends(BFF) component of Consent2Share (C2S)
 
 For more information and related downloads for Consent2Share, please visit [Consent2Share](https://bhits-dev.github.io/consent2share/).
 
