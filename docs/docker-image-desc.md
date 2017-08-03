@@ -1,20 +1,20 @@
 # Short Description
 
-The Consent2Share User Interface API (c2s-ui-api) is a Backend For Frontends(BFF) component of Consent2Share (C2S)
+The Master User Interface API (master-ui-api) is a Backend For Frontends(BFF) component of Consent2Share (C2S)
 
 # Full Description
 
 # Supported Source Code Tags and Current `Dockerfile` Link
 
- [`0.3.0 (latest)`](https://github.com/bhits-dev/c2s-ui-api/releases/tag/0.4.0),[`0.3.0`](https://github.com/bhits-dev/c2s-ui-api/releases/tag/0.3.0), [`0.1.0`](https://github.com/bhits-dev/c2s-ui-api/releases/tag/0.1.0)
+[`0.1.0(latest)`](https://github.com/bhits-dev/master-ui-api/releases/tag/0.1.0)
 
-[`Current Dockerfile`](https://github.com/bhits-dev/c2s-ui-api/blob/master/c2s-ui-api/src/main/docker/Dockerfile)
+[`Current Dockerfile`](../master-ui-api/src/main/docker/Dockerfile)
 
-For more information about this image, the source code, and its history, please see the [GitHub repository](https://github.com/bhits-dev/c2s-ui-api).
+For more information about this image, the source code, and its history, please see the [GitHub repository](https://github.com/bhits-dev/master-ui-api).
 
 # What is C2S-UI-API?
 
-The Consent2Share User Interface API (c2s-ui-api) is a Backend For Frontends(BFF) component of Consent2Share (C2S)
+The Consent2Share User Interface API (master-ui-api) is a Backend For Frontends(BFF) component of Consent2Share (C2S)
 
 For more information and related downloads for Consent2Share, please visit [Consent2Share](https://bhits-dev.github.io/consent2share/).
 
@@ -22,9 +22,9 @@ For more information and related downloads for Consent2Share, please visit [Cons
 
 ## Start a C2S-UI-API Instance
 
-Be sure to familiarize yourself with the repository's [README.md](https://github.com/bhits-dev/c2s-ui-api) file before starting the instance.
+Be sure to familiarize yourself with the repository's [README.md](https://github.com/bhits-dev/master-ui-api) file before starting the instance.
 
-`docker run  --name c2s-ui-api -d bhitsdev/c2s-ui-api:latest <additional program arguments>`
+`docker run  --name master-ui-api -d bhitsdev/master-ui-api:latest <additional program arguments>`
 
 *NOTE: In order for this project to fully function as a microservice in the Consent2Share application, it is required to setup the dependency microservices and the support level infrastructure. Please refer to the Consent2Share Deployment Guide in the corresponding Consent2Share release (see [Consent2Share Releases Page](https://github.com/bhits-dev/consent2share/releases)) for instructions to setup the Consent2Share infrastructure.*
  
@@ -40,7 +40,7 @@ Also, [Spring Boot](https://projects.spring.io/spring-boot/) supports other ways
 
 The following is an example to override the default database password:
 
-`docker run -d bhitsdev/c2s-ui-api:latest --spring.datasource.password=strongpassword`
+`docker run -d bhitsdev/master-ui-api:latest --spring.datasource.password=strongpassword`
 
 ## Environment Variables
 
@@ -50,19 +50,19 @@ When you start the C2S-UI-API image, you can edit the configuration of the C2S-U
 
 This environment variable is used to setup which jar file will run. You need to mount the jar file to the root of container.
 
-`docker run --name c2s-ui-api -e JAR_FILE="c2s-ui-api-latest.jar" -v "/path/on/dockerhost/c2s-ui-api-latest.jar:/c2s-ui-api-latest.jar" -d bhitsdev/c2s-ui-api:latest`
+`docker run --name master-ui-api -e JAR_FILE="master-ui-api-latest.jar" -v "/path/on/dockerhost/master-ui-api-latest.jar:/master-ui-api-latest.jar" -d bhitsdev/master-ui-api:latest`
 
 ### JAVA_OPTS 
 
 This environment variable is used to setup a JVM argument, such as memory configuration.
 
-`docker run --name c2s-ui-api -e "JAVA_OPTS=-Xms512m -Xmx700m -Xss1m" -d bhitsdev/c2s-ui-api:latest`
+`docker run --name master-ui-api -e "JAVA_OPTS=-Xms512m -Xmx700m -Xss1m" -d bhitsdev/master-ui-api:latest`
 
 ### DEFAULT_PROGRAM_ARGS 
 
 This environment variable is used to setup an application argument. The default value is: "--spring.profiles.active=application-default, docker".
 
-`docker run --name c2s-ui-api -e DEFAULT_PROGRAM_ARGS="--spring.profiles.active=application-default,ssl,docker" -d bhitsdev/c2s-ui-api:latest`
+`docker run --name master-ui-api -e DEFAULT_PROGRAM_ARGS="--spring.profiles.active=application-default,ssl,docker" -d bhitsdev/master-ui-api:latest`
 
 # Supported Docker Versions
 
@@ -74,15 +74,15 @@ Please see the [Docker installation documentation](https://docs.docker.com/engin
 
 # License
 
-View [license](https://github.com/bhits-dev/c2s-ui-api/blob/master/LICENSE) information for the software contained in this image.
+View [license](https://github.com/bhits-dev/master-ui-api/blob/master/LICENSE) information for the software contained in this image.
 
 # User Feedback
 
 ## Documentation
  
-Documentation for this image is stored in the [bhits-dev/c2s-ui-api](https://github.com/bhits-dev/c2s-ui-api) GitHub repository. Be sure to familiarize yourself with the repository's README.md file before attempting a pull request.
+Documentation for this image is stored in the [bhits-dev/master-ui-api](https://github.com/bhits-dev/master-ui-api) GitHub repository. Be sure to familiarize yourself with the repository's README.md file before attempting a pull request.
 
 ## Issues
 
-If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/bhits-dev/c2s-ui-api/issues).
+If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/bhits-dev/master-ui-api/issues).
 
