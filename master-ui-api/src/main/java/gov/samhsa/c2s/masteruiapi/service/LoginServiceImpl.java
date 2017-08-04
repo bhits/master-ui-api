@@ -4,6 +4,7 @@ import gov.samhsa.c2s.masteruiapi.config.C2sMasterUiProperties;
 import gov.samhsa.c2s.masteruiapi.infrastructure.SupportedRoles;
 import gov.samhsa.c2s.masteruiapi.service.dto.LoginResponseDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.CredentialsDto;
+import gov.samhsa.c2s.masteruiapi.service.dto.UaaProfileDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaTokenDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaUserInfoDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.LimitedProfileResponse;
@@ -34,12 +35,12 @@ public class LoginServiceImpl implements LoginService {
             // TODO remove this check when staff profile is from UMS
             if(userInfo.isPresent() && (credentialsDto.getRole().equals(SupportedRoles.PATIENT.getName())
                     ||credentialsDto.getRole().equals(SupportedRoles.PROVIDER.getName()) )){
-
-                LimitedProfileResponse limitedProfileResponse = umsService.getProfile(userInfo.get().getUser_id(), userInfo.get().getUser_name());
+                UaaUserInfoDto uaaUserInfo = userInfo.get();
+                LimitedProfileResponse limitedProfileResponse = umsService.getProfile(uaaUserInfo.getUser_id(), uaaUserInfo.getUser_name());
                 // Return token to user
                 return LoginResponseDto.builder()
                         .accessToken(accessToken.get())
-                        .profileToken(userInfo.get())
+                        .profileToken( mapToUaaProfileDto(uaaUserInfo))
                         .limitedProfileResponse(limitedProfileResponse)
                         .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
                         .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
@@ -49,7 +50,7 @@ public class LoginServiceImpl implements LoginService {
 
                 return LoginResponseDto.builder()
                         .accessToken(accessToken.get())
-                        .profileToken(userInfo.get())
+                        .profileToken(mapToUaaProfileDto(userInfo.get()))
                         .limitedProfileResponse(limitedProfileResponse)
                         .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
                         .masterUiLoginUrl( c2sMasterUiProperties.getLoginUrl())
@@ -69,5 +70,16 @@ public class LoginServiceImpl implements LoginService {
     private boolean hasAccessScope(String scopes, String selectedRole){
         return scopes.contains(c2sMasterUiProperties.getMapping().get(selectedRole).getAccessScope());
     }
+
+    private UaaProfileDto mapToUaaProfileDto(UaaUserInfoDto uaaUserInfo){
+        return UaaProfileDto.builder()
+                .email(uaaUserInfo.getEmail())
+                .familyName(uaaUserInfo.getFamily_name())
+                .givenName(uaaUserInfo.getGiven_name())
+                .userId(uaaUserInfo.getUser_id())
+                .userName(uaaUserInfo.getUser_name())
+                .name(uaaUserInfo.getName()).build();
+    }
+
 
 }
