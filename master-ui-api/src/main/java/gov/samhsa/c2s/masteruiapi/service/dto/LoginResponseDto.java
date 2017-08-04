@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoginResponseDto {
     private Object accessToken;
-    private Object profileToken;
+    private UaaProfileDto profileToken;
     private LimitedProfileResponse limitedProfileResponse;
     private String c2sClientHomeUrl;
     private String masterUiLoginUrl;
