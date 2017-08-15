@@ -20,6 +20,9 @@ import java.util.Optional;
 @Slf4j
 public class LoginServiceImpl implements LoginService {
 
+    private static final String BAD_CREDENTIAL_ERROR_MESSAGE = "Bad credentials";
+    private static final String ACCOUNT_LOCKED_ERROR_MESSAGE = "Your account has been locked because of too many failed attempts to login";
+
     @Autowired
     private UaaService uaaService;
 
@@ -31,10 +34,6 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public LoginResponseDto login(CredentialsDto credentialsDto) {
-
-        String badCredentialErrorMessage = "Bad credentials";
-        String accountLockedErrorMessage = "Your account has been locked because of too many failed attempts to login";
-
         try {
             Optional<UaaTokenDto> accessToken = uaaService.getAccessTokenUsingPasswordGrant(credentialsDto);
             if (accessToken.isPresent() && hasAccessScope(accessToken.get().getScope(), credentialsDto.getRole())) {
@@ -71,9 +70,9 @@ public class LoginServiceImpl implements LoginService {
         }catch (Exception e){
             String errorMessage = e.getCause().getMessage();
             log.error(errorMessage);
-            if(errorMessage.contains(badCredentialErrorMessage)){
+            if(errorMessage.contains(BAD_CREDENTIAL_ERROR_MESSAGE)){
                 throw new BadCredentialsException();
-            }else if(errorMessage.contains(accountLockedErrorMessage)){
+            }else if(errorMessage.contains(ACCOUNT_LOCKED_ERROR_MESSAGE)){
                 throw new AccountLockedException();
             }
         }
