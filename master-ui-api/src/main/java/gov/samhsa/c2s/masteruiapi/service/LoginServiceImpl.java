@@ -2,20 +2,22 @@ package gov.samhsa.c2s.masteruiapi.service;
 
 import gov.samhsa.c2s.masteruiapi.config.C2sMasterUiProperties;
 import gov.samhsa.c2s.masteruiapi.infrastructure.SupportedRoles;
-import gov.samhsa.c2s.masteruiapi.service.dto.LoginResponseDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.CredentialsDto;
+import gov.samhsa.c2s.masteruiapi.service.dto.LimitedProfileResponse;
+import gov.samhsa.c2s.masteruiapi.service.dto.LoginResponseDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaProfileDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaTokenDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaUserInfoDto;
-import gov.samhsa.c2s.masteruiapi.service.dto.LimitedProfileResponse;
-import gov.samhsa.c2s.masteruiapi.service.exception.UserInforNotPresentException;
-import gov.samhsa.c2s.masteruiapi.service.exception.AccessTokenNotPresentException;
+import gov.samhsa.c2s.masteruiapi.service.exception.AccountLockedException;
+import gov.samhsa.c2s.masteruiapi.service.exception.BadCredentialsException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class LoginServiceImpl implements LoginService {
 
     @Autowired
@@ -29,6 +31,10 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public LoginResponseDto login(CredentialsDto credentialsDto) {
+
+        String badCredentialErrorMessage = "Bad credentials";
+        String accountLockedErrorMessage = "Your account has been locked because of too many failed attempts to login";
+
         try {
             Optional<UaaTokenDto> accessToken = uaaService.getAccessTokenUsingPasswordGrant(credentialsDto);
             if (accessToken.isPresent() && hasAccessScope(accessToken.get().getScope(), credentialsDto.getRole())) {
@@ -57,14 +63,19 @@ public class LoginServiceImpl implements LoginService {
                             .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
                             .build();
                 } else {
-                    throw new UserInforNotPresentException("");
+                    log.error("User info not present not present ");
                 }
             } else {
-                throw new AccessTokenNotPresentException();
+                log.error("Access token not present ");
             }
         }catch (Exception e){
-            System.out.println(e.getMessage());
-            System.out.println(e.getCause().getMessage());
+            String errorMessage = e.getCause().getMessage();
+            log.error(errorMessage);
+            if(errorMessage.contains(badCredentialErrorMessage)){
+                throw new BadCredentialsException();
+            }else if(errorMessage.contains(accountLockedErrorMessage)){
+                throw new AccountLockedException();
+            }
         }
         return null;
     }
