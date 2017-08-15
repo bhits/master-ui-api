@@ -3,7 +3,7 @@ package gov.samhsa.c2s.masteruiapi.service.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(code = HttpStatus.UNAUTHORIZED, reason ="Bad credential Exception" )
+@ResponseStatus(code = HttpStatus.UNAUTHORIZED, reason ="Bad credential Exception." )
 public class BadCredentialsException extends RuntimeException {
     public BadCredentialsException() {
     }
