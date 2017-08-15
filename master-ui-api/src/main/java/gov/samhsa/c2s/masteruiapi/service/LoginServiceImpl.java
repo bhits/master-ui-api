@@ -29,38 +29,44 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public LoginResponseDto login(CredentialsDto credentialsDto) {
-        Optional<UaaTokenDto>  accessToken =  uaaService.getAccessTokenUsingPasswordGrant(credentialsDto);
-        if(accessToken.isPresent() && hasAccessScope(accessToken.get().getScope(), credentialsDto.getRole())){
-            Optional<UaaUserInfoDto> userInfo = uaaService.getUserInfo(accessToken);
-            // TODO remove this check when staff profile is from UMS
-            if(userInfo.isPresent() && (credentialsDto.getRole().equals(SupportedRoles.PATIENT.getName())
-                    ||credentialsDto.getRole().equals(SupportedRoles.PROVIDER.getName()) )){
-                UaaUserInfoDto uaaUserInfo = userInfo.get();
-                LimitedProfileResponse limitedProfileResponse = umsService.getProfile(uaaUserInfo.getUser_id(), uaaUserInfo.getUser_name());
-                // Return token to user
-                return LoginResponseDto.builder()
-                        .accessToken(accessToken.get())
-                        .profileToken( mapToUaaProfileDto(uaaUserInfo))
-                        .limitedProfileResponse(limitedProfileResponse)
-                        .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
-                        .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
-                        .build();
-            }else if(userInfo.isPresent() && credentialsDto.getRole().equals(SupportedRoles.STAFF.getName())){
-                LimitedProfileResponse limitedProfileResponse = umsService.getStaffProfile();
+        try {
+            Optional<UaaTokenDto> accessToken = uaaService.getAccessTokenUsingPasswordGrant(credentialsDto);
+            if (accessToken.isPresent() && hasAccessScope(accessToken.get().getScope(), credentialsDto.getRole())) {
+                Optional<UaaUserInfoDto> userInfo = uaaService.getUserInfo(accessToken);
+                // TODO remove this check when staff profile is from UMS
+                if (userInfo.isPresent() && (credentialsDto.getRole().equals(SupportedRoles.PATIENT.getName())
+                        || credentialsDto.getRole().equals(SupportedRoles.PROVIDER.getName()))) {
+                    UaaUserInfoDto uaaUserInfo = userInfo.get();
+                    LimitedProfileResponse limitedProfileResponse = umsService.getProfile(uaaUserInfo.getUser_id(), uaaUserInfo.getUser_name());
+                    // Return token to user
+                    return LoginResponseDto.builder()
+                            .accessToken(accessToken.get())
+                            .profileToken(mapToUaaProfileDto(uaaUserInfo))
+                            .limitedProfileResponse(limitedProfileResponse)
+                            .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
+                            .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
+                            .build();
+                } else if (userInfo.isPresent() && credentialsDto.getRole().equals(SupportedRoles.STAFF.getName())) {
+                    LimitedProfileResponse limitedProfileResponse = umsService.getStaffProfile();
 
-                return LoginResponseDto.builder()
-                        .accessToken(accessToken.get())
-                        .profileToken(mapToUaaProfileDto(userInfo.get()))
-                        .limitedProfileResponse(limitedProfileResponse)
-                        .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
-                        .masterUiLoginUrl( c2sMasterUiProperties.getLoginUrl())
-                        .build();
-            }else {
-                throw new UserInforNotPresentException("");
+                    return LoginResponseDto.builder()
+                            .accessToken(accessToken.get())
+                            .profileToken(mapToUaaProfileDto(userInfo.get()))
+                            .limitedProfileResponse(limitedProfileResponse)
+                            .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
+                            .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
+                            .build();
+                } else {
+                    throw new UserInforNotPresentException("");
+                }
+            } else {
+                throw new AccessTokenNotPresentException();
             }
-        }else {
-            throw new AccessTokenNotPresentException();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println(e.getCause().getMessage());
         }
+        return null;
     }
 
     private String getUiHomeUrlByRole(String role){
