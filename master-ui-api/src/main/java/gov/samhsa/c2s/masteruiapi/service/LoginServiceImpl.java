@@ -46,7 +46,6 @@ public class LoginServiceImpl implements LoginService {
                     // Return token to user
                     return LoginResponseDto.builder()
                             .accessToken(accessToken.get())
-                            .profileToken(mapToUaaProfileDto(uaaUserInfo))
                             .limitedProfileResponse(limitedProfileResponse)
                             .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
                             .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
@@ -56,7 +55,6 @@ public class LoginServiceImpl implements LoginService {
 
                     return LoginResponseDto.builder()
                             .accessToken(accessToken.get())
-                            .profileToken(mapToUaaProfileDto(userInfo.get()))
                             .limitedProfileResponse(limitedProfileResponse)
                             .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
                             .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
