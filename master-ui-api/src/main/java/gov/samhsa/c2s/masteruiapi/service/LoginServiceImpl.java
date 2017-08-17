@@ -5,16 +5,14 @@ import gov.samhsa.c2s.masteruiapi.infrastructure.SupportedRoles;
 import gov.samhsa.c2s.masteruiapi.service.dto.CredentialsDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.LimitedProfileResponse;
 import gov.samhsa.c2s.masteruiapi.service.dto.LoginResponseDto;
-import gov.samhsa.c2s.masteruiapi.service.dto.UaaProfileDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaTokenDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaUserInfoDto;
 import gov.samhsa.c2s.masteruiapi.service.exception.AccountLockedException;
 import gov.samhsa.c2s.masteruiapi.service.exception.BadCredentialsException;
+import gov.samhsa.c2s.masteruiapi.service.exception.UserUnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -35,36 +33,36 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public LoginResponseDto login(CredentialsDto credentialsDto) {
         try {
-            Optional<UaaTokenDto> accessToken = uaaService.getAccessTokenUsingPasswordGrant(credentialsDto);
-            if (accessToken.isPresent() && hasAccessScope(accessToken.get().getScope(), credentialsDto.getRole())) {
-                Optional<UaaUserInfoDto> userInfo = uaaService.getUserInfo(accessToken);
+           UaaTokenDto accessToken = uaaService.getAccessTokenUsingPasswordGrant(credentialsDto);
+            if (hasAccessScope(accessToken.getScope(), credentialsDto.getRole())) {
+                UaaUserInfoDto userInfo = uaaService.getUserInfo(accessToken);
                 // TODO remove this check when staff profile is from UMS
-                if (userInfo.isPresent() && (credentialsDto.getRole().equals(SupportedRoles.PATIENT.getName())
-                        || credentialsDto.getRole().equals(SupportedRoles.PROVIDER.getName()))) {
-                    UaaUserInfoDto uaaUserInfo = userInfo.get();
-                    LimitedProfileResponse limitedProfileResponse = umsService.getProfile(uaaUserInfo.getUser_id(), uaaUserInfo.getUser_name());
+                if (credentialsDto.getRole().equals(SupportedRoles.PATIENT.getName())
+                        || credentialsDto.getRole().equals(SupportedRoles.PROVIDER.getName())) {
+                    LimitedProfileResponse limitedProfileResponse = umsService.getProfile(userInfo.getUser_id(), userInfo.getUser_name());
                     // Return token to user
                     return LoginResponseDto.builder()
-                            .accessToken(accessToken.get())
+                            .accessToken(accessToken)
                             .limitedProfileResponse(limitedProfileResponse)
                             .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
                             .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
                             .build();
-                } else if (userInfo.isPresent() && credentialsDto.getRole().equals(SupportedRoles.STAFF.getName())) {
+                } else if (credentialsDto.getRole().equals(SupportedRoles.STAFF.getName())) {
                     LimitedProfileResponse limitedProfileResponse = umsService.getStaffProfile();
 
                     return LoginResponseDto.builder()
-                            .accessToken(accessToken.get())
+                            .accessToken(accessToken)
                             .limitedProfileResponse(limitedProfileResponse)
                             .c2sClientHomeUrl(getUiHomeUrlByRole(credentialsDto.getRole()))
                             .masterUiLoginUrl(c2sMasterUiProperties.getLoginUrl())
                             .build();
                 } else {
-                    log.error("User info not present not present ");
+                    log.error("User role not supported. ");
                 }
             } else {
-                log.error("Access token not present ");
+                log.error("User does not have access scope. ");
             }
+
         }catch (Exception e){
             String errorMessage = e.getCause().getMessage();
             log.error(errorMessage);
@@ -74,7 +72,7 @@ public class LoginServiceImpl implements LoginService {
                 throw new AccountLockedException();
             }
         }
-        return null;
+        throw new UserUnauthorizedException();
     }
 
     private String getUiHomeUrlByRole(String role){
@@ -84,16 +82,4 @@ public class LoginServiceImpl implements LoginService {
     private boolean hasAccessScope(String scopes, String selectedRole){
         return scopes.contains(c2sMasterUiProperties.getMapping().get(selectedRole).getAccessScope());
     }
-
-    private UaaProfileDto mapToUaaProfileDto(UaaUserInfoDto uaaUserInfo){
-        return UaaProfileDto.builder()
-                .email(uaaUserInfo.getEmail())
-                .familyName(uaaUserInfo.getFamily_name())
-                .givenName(uaaUserInfo.getGiven_name())
-                .userId(uaaUserInfo.getUser_id())
-                .userName(uaaUserInfo.getUser_name())
-                .name(uaaUserInfo.getName()).build();
-    }
-
-
 }

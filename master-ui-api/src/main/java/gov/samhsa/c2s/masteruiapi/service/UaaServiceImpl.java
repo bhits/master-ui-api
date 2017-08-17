@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class UaaServiceImpl implements UaaService {
@@ -27,10 +26,10 @@ public class UaaServiceImpl implements UaaService {
     private UaaClient uaaClient;
 
     @Override
-    public Optional<UaaTokenDto> getAccessTokenUsingPasswordGrant(CredentialsDto credentialsDto) {
+    public UaaTokenDto getAccessTokenUsingPasswordGrant(CredentialsDto credentialsDto) {
         C2sRoleProperties c2sRoleProperties =  c2sMasterUiProperties.getMapping().get(credentialsDto.getRole());
         Map<String,String> formParams = createPasswordGrantFormParams(c2sRoleProperties.getClientId(),c2sRoleProperties.getClientSecret(), credentialsDto.getUsername(), credentialsDto.getPassword());
-        return Optional.of(uaaClient.getTokenUsingPasswordGrant(formParams));
+        return uaaClient.getTokenUsingPasswordGrant(formParams);
     }
 
     private Map<String,String> createPasswordGrantFormParams(String clientId, String clientSecret, String username, String password){
@@ -45,9 +44,8 @@ public class UaaServiceImpl implements UaaService {
     }
 
     @Override
-    public Optional<UaaUserInfoDto> getUserInfo(Optional<UaaTokenDto> token) {
-        UaaTokenDto uaaTokenDto = token.get();
-        String bearerToken = uaaTokenDto.getToken_type().concat(" ").concat(uaaTokenDto.getAccess_token());
-        return Optional.of(uaaClient.getUserInfo(bearerToken));
+    public UaaUserInfoDto getUserInfo(UaaTokenDto token) {
+        String bearerToken = token.getToken_type().concat(" ").concat(token.getAccess_token());
+        return uaaClient.getUserInfo(bearerToken);
     }
 }
