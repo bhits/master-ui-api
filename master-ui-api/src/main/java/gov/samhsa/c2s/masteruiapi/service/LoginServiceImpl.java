@@ -64,7 +64,7 @@ public class LoginServiceImpl implements LoginService {
             }
 
         }catch (Exception e){
-            String errorMessage = e.getCause().getMessage();
+            String errorMessage = e.getMessage();
             log.error(errorMessage);
             if(errorMessage.contains(BAD_CREDENTIAL_ERROR_MESSAGE)){
                 throw new BadCredentialsException();
