@@ -4,10 +4,8 @@ import gov.samhsa.c2s.masteruiapi.service.dto.CredentialsDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaTokenDto;
 import gov.samhsa.c2s.masteruiapi.service.dto.UaaUserInfoDto;
 
-import java.util.Optional;
-
 public interface UaaService {
-    Optional<UaaTokenDto> getAccessTokenUsingPasswordGrant(CredentialsDto credentialsDto);
+    UaaTokenDto getAccessTokenUsingPasswordGrant(CredentialsDto credentialsDto);
 
-    Optional<UaaUserInfoDto> getUserInfo(Optional<UaaTokenDto> uaaTokenDto);
+    UaaUserInfoDto getUserInfo(UaaTokenDto uaaTokenDto);
 }
