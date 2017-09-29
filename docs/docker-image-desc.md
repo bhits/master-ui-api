@@ -6,13 +6,13 @@ The Master User Interface API (master-ui-api) is a Backend For Frontends(BFF) co
 
 # Supported Source Code Tags and Current `Dockerfile` Link
 
-[`0.1.0(latest)`](https://github.com/bhits-dev/master-ui-api/releases/tag/0.1.0)
+[`0.2.0(latest)`](https://github.com/bhits-dev/master-ui-api/releases/tag/0.2.0),[`0.1.0`](https://github.com/bhits-dev/master-ui-api/releases/tag/0.1.0)
 
 [`Current Dockerfile`](../master-ui-api/src/main/docker/Dockerfile)
 
 For more information about this image, the source code, and its history, please see the [GitHub repository](https://github.com/bhits-dev/master-ui-api).
 
-# What is C2S-UI-API?
+# What is MASTER-UI-API?
 
 The Master User Interface API (master-ui-api) is a Backend For Frontends(BFF) component of Consent2Share (C2S)
 
@@ -20,7 +20,7 @@ For more information and related downloads for Consent2Share, please visit [Cons
 
 # How to Use This Image
 
-## Start a C2S-UI-API Instance
+## Start a MASTER-UI-API Instance
 
 Be sure to familiarize yourself with the repository's [README.md](https://github.com/bhits-dev/master-ui-api) file before starting the instance.
 
@@ -44,7 +44,7 @@ The following is an example to override the default database password:
 
 ## Environment Variables
 
-When you start the C2S-UI-API image, you can edit the configuration of the C2S-UI-API instance by passing one or more environment variables on the command line. 
+When you start the MASTER-UI-API image, you can edit the configuration of the MASTER-UI-API instance by passing one or more environment variables on the command line. 
 
 ### JAR_FILE
 
